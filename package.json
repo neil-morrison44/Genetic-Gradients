@@ -1,0 +1,31 @@
+{
+  "name": "genetic-gradients",
+  "version": "1.0.0",
+  "description": "Genetically generate layered CSS3 gradients to match an image",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://neil-morrison44@github.com/neil-morrison44/Genetic-Gradients.git"
+  },
+  "keywords": [
+    "gradients",
+    "node",
+    "genetic"
+  ],
+  "author": "Neil Morrison",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/neil-morrison44/Genetic-Gradients/issues"
+  },
+  "homepage": "https://github.com/neil-morrison44/Genetic-Gradients#readme",
+  "dependencies": {
+    "color-thief": "^2.2.2",
+    "image-size": "^0.5.0",
+    "node-resemble-js": "0.0.5",
+    "phantom": "^2.1.1",
+    "resemble": "^1.4.0"
+  }
+}
