@@ -1,4 +1,5 @@
-const phantom = require("phantom");
+// const phantom = require("phantom");
+const Nightmare = require("nightmare");
 const sizeOf = require('image-size');
 const fs = require('fs');
 const resemble = require("resemble");
@@ -38,36 +39,31 @@ for (var i = 5; i >= 0; i--) {
   newGradient.mutate(10);
   gradients.push(newGradient);
 }
-// gradients.push("white");
 
-// console.log(generatePage(gradients));
+const nightmare = new Nightmare({
+  "show": false,
+  "switches":{
+    "disable-javascript": true,
+    "disable-renderer-backgrounding": true
+  }
+});
+
+nightmare.viewport(dimensions.width, dimensions.height)
+
 
 function compareGradients(testGradients, callback){
   var _ph, _page, _outObj;
 
-  phantom.create().then(ph => {
-      _ph = ph;
-      // console.log("phantom");
-      return _ph.createPage();
-  }).then(page => {
-      _page = page;
-      // console.log("page");
-      _page.property('viewportSize', {width:dimensions.width, height:dimensions.height});
-      return _page.open('data:text/html;charset=utf-8,'+ generatePage(testGradients));
-  }).then(status => {
-      // console.log(status);
-      return _page.property('content')
-  }).then(content => {
-      _page.render("page.png");
-      _page.close();
-      _ph.exit();
-
-      pageFile = fs.readFileSync(__dirname + "/page.png");
-      var diff = resemble.resemble(imageFile).compareTo(pageFile).onComplete(function(data){
+  nightmare
+    .goto("data:text/html;charset=utf-8,"+ generatePage(testGradients))
+    .screenshot()
+    .then(function(imageData){
+      pageFile = imageData;
+      var diff = resemble.resemble(imageFile).compareTo(imageData).onComplete(function(data){
         var missMatch = parseFloat(data.misMatchPercentage);
         callback(missMatch);
       });
-  });
+    });
 }
 
 var totalLoops = 10000;
@@ -82,14 +78,18 @@ function testNewGradients(){
     }
     return clone;
   });
+
   compareGradients(newGradients, function(missMatch){
     if (missMatch < bestMismatch){
-      console.log("improvement!", missMatch);
+      console.log("improvement!", `${missMatch}%`);
       bestMismatch = missMatch;
       gradients = newGradients;
       fs.writeFileSync("best.png", pageFile);
+      fs.writeFileSync("best.html", generatePage(gradients));
     }else{
-      console.log("no improvement!", totalLoops, `${missMatch}%`);
+      if(totalLoops%10 === 0){
+        console.log("no improvement!", totalLoops, `${missMatch}%`);
+      }
     }
     totalLoops--;
     if (totalLoops > 0){

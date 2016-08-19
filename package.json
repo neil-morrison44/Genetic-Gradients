@@ -24,8 +24,8 @@
   "dependencies": {
     "color-thief": "^2.2.2",
     "image-size": "^0.5.0",
+    "nightmare": "^2.6.1",
     "node-resemble-js": "0.0.5",
-    "phantom": "^2.1.1",
     "resemble": "^1.4.0"
   }
 }
